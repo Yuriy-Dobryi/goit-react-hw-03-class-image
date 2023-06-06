@@ -1,21 +1,24 @@
 import PropTypes from "prop-types";
-// import { ImageGalleryItem } from './ImageGalleryItem'
+import { ImageGalleryItem } from './ImageGalleryItem';
+import styles from './ImageGallery.module.css';
 
-export const ImageGallery = ({ contacts, removeContact }) => (
-  <ul>
-    {contacts.map((contact) => (
-      <li>
-        {/* <ImageGalleryItem key={contact.id} */}
-          contact={contact}
-          removeContact={removeContact} />
-      </li>
-      
-    ))}
+export const ImageGallery = ({ images }) => (
+  <ul className={styles.gallery}>
+    {images.map(({id, webformatURL , largeImageURL, tags }) =>
+      <ImageGalleryItem key={id}
+        previewImg={webformatURL}
+        largeImg={largeImageURL}
+        tags={tags} />)};
   </ul>
 );
 
-// ImageGallery.propTypes = {
-//   contacts: PropTypes.arrayOf(
-//     PropTypes.objectOf(PropTypes.string).isRequired
-//   ).isRequired,
-// };
+ImageGallery.propTypes = {
+  images: PropTypes.arrayOf(
+    PropTypes.shape({
+      id: PropTypes.number.isRequired,
+      webformatURL: PropTypes.string.isRequired,
+      largeImageURL: PropTypes.string.isRequired,
+      tags: PropTypes.string,
+    })
+  ).isRequired,
+};

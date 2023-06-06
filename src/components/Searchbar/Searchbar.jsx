@@ -18,10 +18,11 @@ export class Searchbar extends Component {
     const search = this.state.search.trim();
 
     if (search === '') {
-      toast.warning('There should not be an empty line', {
-        autoClose: 3000,
-        theme: "dark"
-      })
+      toast.warning('There should not be an empty line.',
+        {
+          autoClose: 3000,
+          theme: "dark"
+        })
       return;
     }
 

@@ -1,11 +1,11 @@
-import { React, Component } from "react";
-import { nanoid } from "nanoid";
+import { Component } from "react";
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { Searchbar } from "./Searchbar/Searchbar";
-// import { Filter } from "./Filter/Filter";
-// import { ContactList } from "./ContactList/ContactList";
+import { ImageGallery } from "./ImageGallery/ImageGallery";
+// import { Loader } from "./Loader/Loader";
+
 export class App extends Component {
   state = {
     imageName: '',
@@ -25,6 +25,7 @@ export class App extends Component {
     return (
       <div className="App">
         <Searchbar onSubmit={this.changeImageName} />
+        <ImageGallery />
         <ToastContainer />
       </div>
     )

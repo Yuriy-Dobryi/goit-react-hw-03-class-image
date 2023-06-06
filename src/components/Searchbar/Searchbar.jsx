@@ -1,5 +1,4 @@
 import { Component } from "react";
-import { nanoid } from "nanoid";
 import { toast } from 'react-toastify';
 import PropTypes from "prop-types";
 import styles from './Searchbar.module.css';
@@ -23,6 +22,7 @@ export class Searchbar extends Component {
         autoClose: 3000,
         theme: "dark"
       })
+      return;
     }
 
     this.props.onSubmit(search);
@@ -55,6 +55,6 @@ export class Searchbar extends Component {
   }
 }
 
-// Searchbar.propTypes = {
-//   addContact: PropTypes.func.isRequired,
-// };
+Searchbar.propTypes = {
+  onSubmit: PropTypes.func.isRequired,
+};

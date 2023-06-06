@@ -1,7 +1,7 @@
 import PropTypes from "prop-types";
 import stylesApp from '../App.module.css'
 
-export const Filter = ({ filter, setFilter }) => (
+export const Loader = ({ filter, setFilter }) => (
   <label>
     Find contacts by name
     <input className={stylesApp.input}
@@ -14,7 +14,7 @@ export const Filter = ({ filter, setFilter }) => (
   </label>
 );
 
-Filter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  setFilter: PropTypes.func.isRequired,
-};
+// Loader.propTypes = {
+//   filter: PropTypes.string.isRequired,
+//   setFilter: PropTypes.func.isRequired,
+// };

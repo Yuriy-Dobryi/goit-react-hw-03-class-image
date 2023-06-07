@@ -21,7 +21,7 @@ export class App extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { imageName: prevImageName, page: prevPage } = prevState;
-    const { imageName, page, images } = this.state;
+    const { imageName, page, images, status } = this.state;
 
     const isImageNameChanged = prevImageName !== imageName;
     const isPageChanged = prevPage !== page;
@@ -35,13 +35,16 @@ export class App extends Component {
 
       try {
         const { hits, totalHits } = await this.getImages();
+
         if (isImageNameChanged) {
           if (totalHits === 0) {
-            throw Error(
-              'Sorry, there are no images matching your search query.'
-            );
+            toast.error('Sorry, there are no images matching your search query.')
+            throw Error();
           }
           toast.success(`Hooray! We found ${totalHits} images.`);
+        }
+        else if (images.length + hits.length === totalHits) {
+          toast.info(`There is the last page with ${imageName}`);
         }
 
         this.setState(isImageNameChanged
@@ -51,9 +54,10 @@ export class App extends Component {
 
       } catch (error) {
         this.setState({ status: 'rejected' });
-        toast.error(error.message);
       } finally {
-        this.setState({ status: 'resolved' });
+        if (status !== 'rejected') {
+          this.setState({ status: 'resolved' });
+        }
       }
     }
   }

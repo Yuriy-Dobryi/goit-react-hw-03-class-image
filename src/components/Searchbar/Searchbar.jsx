@@ -18,11 +18,7 @@ export class Searchbar extends Component {
     const search = this.state.search.trim();
 
     if (search === '') {
-      toast.warning('There should not be an empty line.',
-        {
-          autoClose: 3000,
-          theme: "dark"
-        })
+      toast.warning('There should not be an empty line.')
       return;
     }
 
@@ -32,7 +28,7 @@ export class Searchbar extends Component {
 
   render() {
     const { search } = this.state;
-
+    
     return (
       <header className={styles.searchbar}>
         <form className={styles.form} onSubmit={this.handleSubmit}>

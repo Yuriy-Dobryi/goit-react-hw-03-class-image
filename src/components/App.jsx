@@ -8,20 +8,9 @@ import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { LoadMoreBtn } from "./LoadMoreBtn/LoadMoreBtn";
 import '../index.css';
+import loaderStyles from './helpers/loaderStyles';
 
-const loaderStyles = {
-  width: "100",
-  height: "120",
-  radius: "9",
-  color: "#4fa94d",
-  ariaLabel: "three-dots-loading",
-  wrapperStyle: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-  }
-}
+
 export class App extends Component {
   state = {
     imageName: '',
@@ -39,28 +28,32 @@ export class App extends Component {
 
     if (isImageNameChanged || isPageChanged) {
       this.setState({ status: 'pending' });
+      
+      if (isImageNameChanged) {
+        this.setState({ page: 1, images: [] })
+      }
 
       try {
-        let updatedImages = [];
+        const { hits, totalHits } = await this.getImages();
         if (isImageNameChanged) {
-          updatedImages = await this.getImages();
-        } else {
-          const { hits } = await this.getImages();
-          updatedImages.hits = [...images, ...hits];
+          if (totalHits === 0) {
+            throw Error(
+              'Sorry, there are no images matching your search query.'
+            );
+          }
+          toast.success(`Hooray! We found ${totalHits} images.`);
         }
 
-        if (updatedImages.totalHits === 0) {
-          throw Error(
-            'Sorry, there are no images matching your search query.'
-          );
-        }
-
-        toast.success(`Hooray! We found ${updatedImages.totalHits} images.`);
-        this.setState({ images: updatedImages.hits, status: 'resolved' });
+        this.setState(isImageNameChanged
+          ? { images: [...hits] }
+          : { images: [...images, ...hits] }
+        );
 
       } catch (error) {
         this.setState({ status: 'rejected' });
         toast.error(error.message);
+      } finally {
+        this.setState({ status: 'resolved' });
       }
     }
   }
@@ -103,20 +96,18 @@ export class App extends Component {
     return (
       <div className="App">
         <Searchbar onSubmit={this.changeImageName} />
-        
-        {status === 'pending' &&
-          <ThreeDots {...loaderStyles} />}
+        <ImageGallery images={images} />
         
         {status === 'rejected' &&
           <p>Error</p>}
         
         {status === 'resolved' &&
-          <>
-            <ImageGallery images={images} />
-            <LoadMoreBtn handleClick={this.incrementPage}/>
-          </>}
+          <LoadMoreBtn handleClick={this.incrementPage} />}
+        
+        {status === 'pending' &&
+          <ThreeDots {...loaderStyles} />}
 
-        <ToastContainer />
+        <ToastContainer autoClose={3000} />
       </div>
     )
   }

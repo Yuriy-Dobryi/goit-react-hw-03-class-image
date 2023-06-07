@@ -26,11 +26,16 @@ img {
   height: auto;
 }
 
+button {
+  font-family: inherit;
+  cursor: pointer;
+}
+
 .App {
   display: grid;
   grid-template-columns: 1fr;
-  grid-gap: 16px;
-  padding-bottom: 24px;
+  grid-gap: 30px;
+  padding-bottom: 15px;
 }
 
 .Overlay {

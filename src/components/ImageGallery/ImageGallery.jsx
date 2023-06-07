@@ -8,7 +8,7 @@ export const ImageGallery = ({ images }) => (
       <ImageGalleryItem key={id}
         previewImg={webformatURL}
         largeImg={largeImageURL}
-        tags={tags} />)};
+        tags={tags} />)}
   </ul>
 );
 

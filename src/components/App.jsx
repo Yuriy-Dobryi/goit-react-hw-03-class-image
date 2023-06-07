@@ -2,14 +2,13 @@ import { Component } from "react";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-import { ThreeDots } from 'react-loader-spinner'
+import { Triangle } from 'react-loader-spinner'
 
 import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { LoadMoreBtn } from "./LoadMoreBtn/LoadMoreBtn";
 import '../index.css';
 import loaderStyles from './helpers/loaderStyles';
-
 
 export class App extends Component {
   state = {
@@ -21,43 +20,42 @@ export class App extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { imageName: prevImageName, page: prevPage } = prevState;
-    const { imageName, page, images, status } = this.state;
+    const { imageName, page, images } = this.state;
 
     const isImageNameChanged = prevImageName !== imageName;
     const isPageChanged = prevPage !== page;
 
     if (isImageNameChanged || isPageChanged) {
       this.setState({ status: 'pending' });
-      
+
       if (isImageNameChanged) {
         this.setState({ page: 1, images: [] })
       }
 
       try {
         const { hits, totalHits } = await this.getImages();
+        const isLastPage = hits.length < 30;
 
         if (isImageNameChanged) {
           if (totalHits === 0) {
             toast.error('Sorry, there are no images matching your search query.')
-            throw Error();
+            throw new Error('rejected');
           }
           toast.success(`Hooray! We found ${totalHits} images.`);
         }
-        else if (images.length + hits.length === totalHits) {
-          toast.info(`There is the last page with ${imageName}`);
+
+        this.setState({
+          images: isImageNameChanged
+            ? [...hits]
+            : [...images, ...hits],
+          status: isLastPage ? 'rejected' : 'resolved'
+        });
+
+        if (isLastPage) {
+          toast.info(`There is the last page with "${imageName}"`);
         }
-
-        this.setState(isImageNameChanged
-          ? { images: [...hits] }
-          : { images: [...images, ...hits] }
-        );
-
       } catch (error) {
-        this.setState({ status: 'rejected' });
-      } finally {
-        if (status !== 'rejected') {
-          this.setState({ status: 'resolved' });
-        }
+        this.setState({ status: error.message });
       }
     }
   }
@@ -68,6 +66,7 @@ export class App extends Component {
       toast.info("The same query, enter different.")
       return;
     }
+
     this.setState({ imageName: newName });
   }
 
@@ -86,7 +85,7 @@ export class App extends Component {
         orientation: 'horizontal',
         safesearch: true,
         page,
-        per_page: 40,
+        per_page: 30,
       },
     };
 
@@ -102,14 +101,11 @@ export class App extends Component {
         <Searchbar onSubmit={this.changeImageName} />
         <ImageGallery images={images} />
         
-        {status === 'rejected' &&
-          <p>Error</p>}
-        
         {status === 'resolved' &&
           <LoadMoreBtn handleClick={this.incrementPage} />}
         
         {status === 'pending' &&
-          <ThreeDots {...loaderStyles} />}
+          <Triangle {...loaderStyles} />}
 
         <ToastContainer autoClose={3000} />
       </div>

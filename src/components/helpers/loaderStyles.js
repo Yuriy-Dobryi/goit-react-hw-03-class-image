@@ -1,9 +1,8 @@
 const loaderStyles = {
-  width: '100',
+  width: '140',
   height: '120',
-  radius: '9',
-  color: '#4fa94d',
-  ariaLabel: 'three-dots-loading',
+  color: '#EA6DB1',
+  ariaLabel: 'triangle-loading',
   wrapperStyle: {
     marginLeft: 'auto',
     marginRight: 'auto',

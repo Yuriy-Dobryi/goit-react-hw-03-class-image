@@ -20,7 +20,7 @@ export class App extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { imageName: prevImageName, page: prevPage } = prevState;
-    const { imageName, page } = this.state;
+    const { imageName, page, images } = this.state;
 
     const isImageNameChanged = prevImageName !== imageName;
     const isPageChanged = prevPage !== page;
@@ -30,29 +30,31 @@ export class App extends Component {
 
       try {
         const { hits, totalHits } = await this.getImages();
-        
         const isLastPage = hits.length < 30;
 
         if (isImageNameChanged) {
           if (totalHits === 0) {
             toast.error('Sorry, there are no images matching your search query.')
-            throw new Error('rejected');
+            throw new Error();
           }
           toast.success(`Hooray! We found ${totalHits} images.`);
         }
 
-        this.setState((prevState)=>({
-          images: isImageNameChanged
-            ? [...hits]
-            : [...prevState.images, ...hits],
-          status: isLastPage ? 'rejected' : 'resolved'
-        }));
-
         if (isLastPage) {
           toast.info(`There is the last page with "${imageName}"`);
         }
-      } catch (error) {
-        this.setState({ status: error.message });
+
+        this.setState({
+          images: isImageNameChanged
+            ? [...hits]
+            : [...images, ...hits],
+          status: isLastPage
+            ? 'rejected' :
+            'resolved'
+        });
+
+      } catch {
+        this.setState({ status: 'rejected' });
       }
     }
   }
@@ -60,12 +62,13 @@ export class App extends Component {
   changeImageName = (newName) => {
     const { imageName } = this.state;
     if (imageName === newName) {
-      toast.info("The same query, enter different.")
+      toast.info("The same query. Please, enter different.")
       return;
     }
 
     this.setState({
       imageName: newName,
+      // Якщо помістити наступні state-властивості в метод componentDidUpdate то почнуться каруселі та додаткові перевірки або створити новий state.
       page: 1,
       images: [],
     });

@@ -20,7 +20,7 @@ export class App extends Component {
 
   async componentDidUpdate(_, prevState) {
     const { imageName: prevImageName, page: prevPage } = prevState;
-    const { imageName, page, images } = this.state;
+    const { imageName, page } = this.state;
 
     const isImageNameChanged = prevImageName !== imageName;
     const isPageChanged = prevPage !== page;
@@ -28,12 +28,9 @@ export class App extends Component {
     if (isImageNameChanged || isPageChanged) {
       this.setState({ status: 'pending' });
 
-      if (isImageNameChanged) {
-        this.setState({ page: 1, images: [] })
-      }
-
       try {
         const { hits, totalHits } = await this.getImages();
+        
         const isLastPage = hits.length < 30;
 
         if (isImageNameChanged) {
@@ -44,12 +41,12 @@ export class App extends Component {
           toast.success(`Hooray! We found ${totalHits} images.`);
         }
 
-        this.setState({
+        this.setState((prevState)=>({
           images: isImageNameChanged
             ? [...hits]
-            : [...images, ...hits],
+            : [...prevState.images, ...hits],
           status: isLastPage ? 'rejected' : 'resolved'
-        });
+        }));
 
         if (isLastPage) {
           toast.info(`There is the last page with "${imageName}"`);
@@ -67,7 +64,11 @@ export class App extends Component {
       return;
     }
 
-    this.setState({ imageName: newName });
+    this.setState({
+      imageName: newName,
+      page: 1,
+      images: [],
+    });
   }
 
   incrementPage = () => {

@@ -8,7 +8,7 @@ import { Searchbar } from "./Searchbar/Searchbar";
 import { ImageGallery } from "./ImageGallery/ImageGallery";
 import { LoadMoreBtn } from "./LoadMoreBtn/LoadMoreBtn";
 import '../index.css';
-import loaderStyles from './helpers/loaderStyles';
+import loaderStyles from '../helpers/loaderStyles';
 
 export class App extends Component {
   state = {
